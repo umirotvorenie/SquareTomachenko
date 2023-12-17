@@ -1,18 +1,9 @@
 using Microsoft.Office.Interop.Word;
-using System.Data;
-using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Runtime.InteropServices;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using Application = Microsoft.Office.Interop.Word.Application;
 using Excel = Microsoft.Office.Interop.Excel;
 using iText.Kernel.Pdf;
 using iText.Kernel.Font;
-using iText.Layout;
-using iText.Layout.Element;
-
-using Word = Microsoft.Office.Interop.Word;
-
 using iText.IO.Font;
 
 namespace SquareTomachenko
@@ -172,7 +163,6 @@ namespace SquareTomachenko
 
         private string GetResultsText()
         {
-            // Собираем значения и результаты в текстовую строку
             string resultText = "";
 
             if (comboBox1.SelectedItem.ToString() == "Куб")
@@ -204,31 +194,25 @@ namespace SquareTomachenko
             var wordApp = new Application();
             wordApp.Visible = false;
 
-            // Создаем новый документ
             var doc = wordApp.Documents.Add();
 
-            // Добавляем заголовок
             var paraTitle = doc.Paragraphs.Add();
             paraTitle.Range.Text = "Результаты вычислений";
             paraTitle.Range.Font.Size = 14;
-            paraTitle.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft; // Изменено на выравнивание по левому краю
+            paraTitle.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
             paraTitle.Range.InsertParagraphAfter();
 
-            // Добавляем значения и результаты в документ
             var paraContent = doc.Paragraphs.Add();
             paraContent.Range.Text = GetResultsText();
             paraContent.Range.Font.Size = 14;
-            paraContent.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft; // Изменено на выравнивание по левому краю
+            paraContent.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
             paraContent.Range.InsertParagraphAfter();
 
-            // Указываем путь и имя файла в папке с проектом
             string projectFolderPath = AppDomain.CurrentDomain.BaseDirectory;
             string projectFilePath = Path.Combine(projectFolderPath, "Результаты.docx");
 
-            // Сохраняем документ
             doc.SaveAs2(projectFilePath);
 
-            // Закрываем Word и документ
             doc.Close();
             Marshal.ReleaseComObject(doc);
             wordApp.Quit();
@@ -240,22 +224,17 @@ namespace SquareTomachenko
         {
             string projectFolderPath = AppDomain.CurrentDomain.BaseDirectory;
 
-            // Формируем полный путь к файлу Excel в папке проекта
             string filePath = Path.Combine(projectFolderPath, "Результаты.xlsx");
 
-            // Создаем новый объект Excel
             Excel.Application excelApp = new Excel.Application();
             excelApp.Visible = false;
 
-            // Создаем новую книгу
             Excel.Workbook workbook = excelApp.Workbooks.Add();
             Excel.Worksheet worksheet = (Excel.Worksheet)workbook.Sheets[1];
 
-            // Добавляем заголовок
             worksheet.Cells[1, 1] = "Результаты вычислений";
 
-            // Добавляем данные
-            string resultText = GetResultsText(); // Метод, который возвращает текст для всех данных
+            string resultText = GetResultsText();
             worksheet.Cells[2, 1] = resultText;
             Excel.Range columnA = worksheet.Columns["A"];
             columnA.AutoFit();
@@ -263,10 +242,9 @@ namespace SquareTomachenko
             {
                 File.Delete(filePath);
             }
-            // Сохраняем файл
+
             workbook.SaveAs(filePath);
 
-            // Закрываем Excel
             workbook.Close();
             Marshal.ReleaseComObject(workbook);
             excelApp.Quit();
@@ -277,11 +255,9 @@ namespace SquareTomachenko
 
         private void SaveToPdf(string text)
         {
-            // Указываем путь и имя файла в папке с проектом
             string projectFolderPath = AppDomain.CurrentDomain.BaseDirectory;
             string projectFilePath = Path.Combine(projectFolderPath, "Результаты.pdf");
 
-            // Создаем новый документ PDF
             using (PdfWriter writer = new PdfWriter(projectFilePath))
             {
                 using (PdfDocument pdf = new PdfDocument(writer))
@@ -304,7 +280,6 @@ namespace SquareTomachenko
         {
             string resultText = GetResultsText();
 
-            // Сохраняем результаты в PDF
             SaveToPdf(resultText);
         }
     }
