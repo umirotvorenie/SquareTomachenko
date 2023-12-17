@@ -46,6 +46,7 @@
             // 
             // comboBox1
             // 
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "Куб", "Прямоугольный параллелепипед", "Конус", "Цилиндр" });
             comboBox1.Location = new Point(478, 42);
